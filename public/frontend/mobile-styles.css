@@ -1,0 +1,1911 @@
+/* AISL Mobile-First Design - Based on PDF Mockups */
+:root {
+  /* Layout dimensions */
+  --bottom-nav-height: 72px;
+  --header-height: 56px;
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  
+  /* Primary colors */
+  --primary-blue: #14323A;
+  --primary-blue-light: #2C3E4F;
+  --primary-gradient: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+  --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* Accent colors */
+  --accent-teal: #16A085;
+  --accent-orange: #FCB444;
+  
+  /* Secondary colors with transparency options */
+  --secondary-green: #10B981;
+  --secondary-green-light: rgba(16, 185, 129, 0.1);
+  --secondary-orange: #F59E0B;
+  --secondary-orange-light: rgba(245, 158, 11, 0.1);
+  --secondary-purple: #8B5CF6;
+  --secondary-purple-light: rgba(139, 92, 246, 0.1);
+  --secondary-pink: #EC4899;
+  --secondary-pink-light: rgba(236, 72, 153, 0.1);
+  --secondary-red: #EF4444;
+  --secondary-red-light: rgba(239, 68, 68, 0.1);
+  
+  /* Text colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: #B6C2C9;
+  --text-light: #7B8A8B;
+  
+  /* Background colors */
+  --bg-primary: #14323A;
+  --bg-secondary: #1B2B2F;
+  --bg-card: #2C3E4F;
+  
+  /* Border colors */
+  --border-light: rgba(255,255,255,0.1);
+  --border-medium: rgba(255,255,255,0.2);
+  
+  /* Shadows with improved depth */
+  --shadow-sm: 0 2px 8px 0 rgba(0,0,0,0.15);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 20px -5px rgba(0, 0, 0, 0.25);
+  
+  /* Border radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  
+  /* Animations */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+}
+
+input, button, textarea, select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Global transitions and animations */
+* {
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Page-specific styles */
+.page-signs-theme {
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--primary-blue-light) 100%);
+}
+
+.page-signs-theme .mobile-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+}
+
+/* Sign & Conversation List Styling */
+.sign-list,
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px;
+}
+
+.sign-item,
+.conversation-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all var(--transition-fast);
+}
+
+.sign-item:hover,
+.conversation-item:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.sign-icon,
+.conversation-avatar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--primary-blue-light);
+  color: var(--text-primary);
+}
+
+.sign-content,
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sign-name,
+.conversation-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.sign-category,
+.conversation-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Categories Grid */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 4px;
+}
+
+.category-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 12px;
+  text-align: center;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.category-card:hover {
+  background: var(--primary-blue-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-medium);
+}
+
+.category-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  background: var(--accent-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all var(--transition-fast);
+}
+
+.category-card:hover .category-icon {
+  transform: scale(1.1);
+}
+
+.category-info {
+  text-align: center;
+}
+
+.category-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.category-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.category-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.category-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-fast);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, currentColor 0%, var(--bg-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-number.purple { color: var(--secondary-purple); }
+.stat-number.green { color: var(--secondary-green); }
+.stat-number.orange { color: var(--accent-orange); }
+.stat-number.blue { color: var(--primary-blue); }
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 16px;
+  padding: 4px;
+}
+
+.quick-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.quick-action:hover {
+  transform: translateY(-2px);
+  background: var(--primary-blue-light);
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all var(--transition-fast);
+}
+
+.quick-action:hover .quick-action-icon {
+  transform: scale(1.1);
+}
+
+.quick-action-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.quick-action:hover .quick-action-title {
+  color: var(--text-primary);
+}
+
+/* Provide fallback for gap in flex on older browsers: use margins where needed below */
+
+
+
+body {
+  font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #14323A;
+  color: var(--text-primary);
+  line-height: 1.6;
+  direction: rtl;
+  text-align: right;
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-inset-bottom) + 16px);
+}
+
+/* Prevent horizontal overflow from large images/elements */
+html, body { overflow-x: hidden; }
+
+/* Always center app and constrain to mobile width so desktop shows mobile layout
+   (user requested pixel-perfect mobile appearance on desktop). */
+/* Mobile Container - Main wrapper */
+.mobile-container {
+  max-width: 414px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg-primary);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-inset-bottom));
+  padding-top: var(--header-height);
+}
+
+/* Conversations Styling */
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.conversation-item:hover {
+  background: var(--primary-blue-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-medium);
+}
+
+.conversation-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all var(--transition-fast);
+}
+
+.conversation-item:hover .conversation-avatar {
+  transform: scale(1.1);
+}
+
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.conversation-message {
+  color: var(--text-secondary);
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conversation-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.conversation-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.conversation-badge {
+  background: var(--accent-orange);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+/* Navigation Styling */
+.bottom-nav-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--primary-blue-light) 100%);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.bottom-nav-item .bottom-nav-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.bottom-nav-item .bottom-nav-label {
+  font-size: 12px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.bottom-nav-item:hover {
+  color: var(--text-primary);
+}
+
+.bottom-nav-item:hover .bottom-nav-icon {
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.bottom-nav-item.active {
+  color: var(--accent-orange);
+}
+
+.bottom-nav-item.active .bottom-nav-icon {
+  color: var(--accent-orange);
+  transform: translateY(-2px);
+}
+
+.bottom-nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  border-radius: 4px;
+  background: var(--accent-orange);
+  transition: width var(--transition-fast);
+}
+
+.bottom-nav-item.active::after {
+  width: 24px;
+}
+
+/* Mobile Header Styles */
+.mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--header-height);
+  background: linear-gradient(90deg, var(--bg-primary) 0%, var(--primary-blue-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border-light);
+  max-width: 414px;
+  margin: 0 auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-left, .header-right {
+  flex: 0 0 72px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-center {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.header-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: var(--text-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 4px;
+}
+
+.header-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+
+.header-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.5;
+}
+
+/* Mobile-First Layout */
+.mobile-container {
+  max-width: 100%;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* Header Styles */
+/* Header Styles */
+.mobile-header {
+  background: var(--bg-primary);
+  padding: 18px 18px 8px 18px;
+  display: flex;
+  align-items: center;
+
+  color: var(--text-primary);
+}
+
+/* Ensure header has relative positioning so we can absolutely center the title */
+.mobile-header { position: relative; }
+
+/* Fixed-width side columns to avoid title overlap */
+.mobile-header .header-left,
+.mobile-header .header-right { min-width: 72px; max-width: 72px; display:flex; align-items:center; }
+
+/* Center title absolutely so it's visually centered regardless of RTL/LTR
+   and side column widths. This prevents injected icons/text from shifting it. */
+.mobile-header .header-center { position: relative; }
+.mobile-header .app-title { position: absolute; left: 50%; transform: translateX(-50%); margin:0; }
+
+/* Subtitle in header */
+.mobile-header .subtitle {
+  font-size: 15px;
+  color: var(--accent-orange);
+  margin-top: 2px;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--accent-orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+}
+
+/* Compact UI overrides - applied when body has .compact-ui */
+.compact-ui {
+  --radius-lg: 10px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+}
+
+.compact-ui .sign-item,
+.compact-ui .conversation-item {
+  padding: 8px !important;
+  gap: 8px !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.compact-ui .sign-icon,
+.compact-ui .conversation-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.compact-ui .category-card {
+  padding: 8px !important;
+  gap: 6px !important;
+}
+
+.compact-ui .category-icon {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.compact-ui .quick-action {
+  padding: 6px !important;
+  gap: 6px !important;
+}
+
+.compact-ui .quick-action-icon {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.compact-ui .quick-action-title { font-size: 11px !important; }
+
+.compact-ui .search-input {
+  padding: 8px 36px 8px 10px !important;
+  font-size: 13px !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.compact-ui .bottom-nav-container { padding: 6px 0 !important; }
+
+.compact-ui .bottom-nav-item { padding: 6px 12px !important; }
+
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--bg-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-btn:hover {
+  background: var(--border-medium);
+  color: var(--text-primary);
+}
+
+/* Make header icons highly visible on the dark header: white icons, subtle transparent bg */
+.mobile-header .header-btn {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+}
+
+.mobile-header .header-btn svg { 
+  display: block; 
+  color: var(--text-primary) !important; /* SVG stroke/fill uses currentColor */
+}
+
+/* Fallback anchors in header-left (icons) should match visual style */
+.mobile-header .header-left .header-btn { margin-left: 6px; }
+
+/* Main layout brand tweaks */
+.brand { display:flex; align-items:center; gap:10px; }
+.brand .logo { width:44px; height:44px; }
+.brand-logo, .mobile-header .header-icon img {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+}
+
+/* Force any usage of the logo image to a small size to avoid layout breakage */
+img[src$="/frontend/logo.png"], img[src$="logo.png"] {
+  width: 32px !important;
+  height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  object-fit: contain !important;
+  display: inline-block !important;
+}
+
+/* App title in header — smaller for compact mobile header */
+.mobile-header .app-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  /* ensure title uses left-to-right rendering and stays centered with Latin letters */
+  direction: ltr !important;
+  unicode-bidi: isolate-override !important;
+  text-align: center;
+}
+
+.app-title-en {
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: 0.4px;
+}
+
+/* Improved header layout: pin icon group to physical left and logo to physical right,
+   center the English title absolutely, and hide subtitle to keep header compact. */
+.mobile-header { position: relative; height: 64px; }
+
+.mobile-header .header-left {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 20;
+}
+
+.mobile-header .header-right {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 20;
+}
+
+.mobile-header .header-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+.mobile-header .app-title { pointer-events: auto; }
+
+/* hide subtitle from header so only the English title shows */
+.mobile-header .subtitle { display: none !important; }
+
+/* slightly smaller icon/logo to avoid overlap */
+.mobile-header .header-btn { width: 24px; height: 24px; padding: 3px; }
+.brand-logo, .mobile-header .header-icon img { width: 24px !important; height: 24px !important; }
+
+/* Force the visual phone frame: constrain the app container to 414px and
+   make header respect the container width so pinned icons stay inside it. */
+.mobile-container {
+  max-width: 414px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box;
+}
+
+.mobile-header {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* Hide any inline username text in the header to keep header clean */
+.mobile-header .header-user { display: none !important; }
+
+/* Prevent any accidental full-bleed images in the content area */
+.mobile-content img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Constrain images inside sign display / output to a reasonable size */
+.sign-display img, #output img, .sign-container img {
+  width: 80px !important;
+  height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+  object-fit: cover !important;
+  border-radius: var(--radius-sm) !important;
+}
+.brand-text { display:none; }
+
+/* Main Content */
+.mobile-content {
+  padding: 16px;
+  max-width: 100%;
+  overflow-x: hidden;
+  min-height: calc(100vh - var(--header-height) - var(--bottom-nav-height));
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--primary-blue-light) 100%);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card Styles */
+/* Card Styles */
+.mobile-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  margin: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--shadow-md);
+
+.mobile-card.large {
+  padding: 14px 12px;
+  margin-bottom: 12px;
+  max-width: 380px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  margin-bottom: 12px;
+}
+
+.tab-navigation .tab-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  background: var(--bg-primary) !important;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--secondary-green) !important;
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  -webkit-transition: all 0.12s ease;
+  transition: all 0.12s ease;
+  text-align: center;
+}
+
+/* Stronger, specific rule so it cannot be overridden by less-specific selectors */
+.tab-navigation .tab-btn.active,
+.tab-navigation .tab-btn:active,
+.tab-navigation .tab-btn:focus {
+  background: linear-gradient(90deg, var(--primary-blue), var(--accent-orange)) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px rgba(16,24,40,0.25) !important;
+  outline: none !important;
+}
+
+/* Prevent browser focus/active from reverting the colors */
+.tab-navigation .tab-btn::-moz-focus-inner { border: 0; }
+
+/* Input Styles */
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  -webkit-box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+  /* slightly narrower textbox centered inside the card */
+  max-width: 320px !important;
+  width: 100%;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Welcome page: smaller textarea and compact input within the large mobile card */
+.mobile-card.large .form-input {
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+.mobile-card.large .form-textarea {
+  min-height: 80px;
+  max-width: 280px !important;
+  font-size: 14px;
+}
+
+/* Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--primary-blue-light);
+  border-color: var(--border-medium);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--accent-orange), var(--primary-blue));
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.96);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--border-medium);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-large {
+  padding: 16px 24px;
+  font-size: 16px;
+}
+
+/* Quick Actions Grid */
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.quick-action {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.quick-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-size: 20px;
+  color: white;
+}
+
+.quick-action-icon.green { background: var(--secondary-green); }
+.quick-action-icon.blue { background: var(--primary-blue); }
+.quick-action-icon.orange { background: var(--secondary-orange); }
+.quick-action-icon.purple { background: var(--secondary-purple); }
+
+.quick-action-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Statistics Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.stat-number.green { color: var(--secondary-green); }
+.stat-number.blue { color: var(--primary-blue); }
+.stat-number.purple { color: var(--secondary-purple); }
+.stat-number.orange { color: var(--secondary-orange); }
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Chat/Conversation List */
+.conversation-list {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.conversation-item:last-child {
+  border-bottom: none;
+}
+
+.conversation-item:hover {
+  background: var(--bg-secondary);
+}
+
+.conversation-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.conversation-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.conversation-time {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.conversation-badge {
+  background: var(--secondary-red);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Output / Results section styling to ensure result appears clearly below input */
+.output-section {
+  margin-top: 12px;
+  max-width: 380px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.output-section .sign-display {
+  min-height: 160px;
+  max-width: 360px !important;
+  margin: 8px auto !important;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  border: 1px solid var(--border-light);
+}
+
+.output-section .output-header h2 {
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+}
+
+.output-section .controls .control-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+}
+
+/* Force single-column stacked layout and center elements for mobile preview */
+.mobile-content {
+  display: block !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+.mobile-content > .mobile-card {
+  width: 100% !important;
+  margin: 12px auto !important;
+  box-sizing: border-box;
+}
+
+/* Make form groups full-width and center their inner controls */
+.mobile-card .form-group { width: 100%; display: block; margin-bottom: 12px; }
+.mobile-card .form-group .form-input,
+.mobile-card .form-group textarea,
+.mobile-card .form-group select { width: 100% !important; }
+
+/* Center action buttons and constrain their width to mobile card */
+.mobile-card .form-group .btn { margin: 8px auto 0 auto; display: inline-flex; }
+
+/* Ensure sign display sits below and is full-width centered */
+.sign-display {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 12px auto !important;
+  text-align: center !important;
+}
+
+.sign-container { justify-content: center !important; }
+
+/* Constrain output images to inline small thumbnails centered */
+#output, .sign-container { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; }
+#output img { width:64px !important; height:64px !important; }
+
+
+/* Authentication page customizations */
+.auth-page {
+  max-width: 420px;
+  margin: 12px auto 24px;
+  padding: 18px;
+  display: block;
+}
+
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.auth-brand img {
+  width: 72px;
+  height: 72px;
+}
+
+.auth-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.auth-page .mobile-card {
+  padding: 16px;
+}
+
+.auth-page .form-label {
+  font-size: 14px;
+}
+
+.auth-page .form-input {
+  padding: 12px 14px;
+  font-size: 15px;
+}
+
+.auth-page .btn {
+  padding: 12px 16px;
+}
+
+.auth-page .btn-primary {
+  border-radius: 10px;
+}
+
+.auth-page .btn-secondary {
+  border-radius: 10px;
+}
+
+.auth-footer-note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 10px;
+}
+
+/* Desktop / larger screens improvements for auth and general layout */
+@media (min-width: 900px) {
+  /* Limit the overall container and center the app for desktop */
+  .mobile-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .mobile-header, .mobile-content {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Make content area layout more centered */
+  .mobile-content {
+    display: flex;
+    justify-content: center;
+    padding-top: 36px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* Auth card centered and slightly larger on desktop */
+  .auth-page {
+    max-width: 520px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  /* Improve visual weight of the auth card on desktop */
+  .auth-page .mobile-card {
+    border: none;
+    box-shadow: 0 8px 30px rgba(17,24,39,0.08);
+    padding: 22px;
+  }
+
+  /* Center brand and enlarge it slightly */
+  .auth-brand {
+    margin-bottom: 18px;
+  }
+
+  .auth-brand img {
+    width: 86px;
+    height: 86px;
+  }
+
+  .auth-title {
+    font-size: 20px;
+  }
+
+  /* Make inputs and buttons easier to use on desktop */
+  .auth-page .form-input {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+
+  .auth-page .btn-full {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+
+  /* Footer area spacing */
+  footer, .site-footer {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+}
+
+/* Desktop large layout: convert mobile single-column cards into a 3-column layout */
+@media (min-width: 1000px) {
+  /* central container constraints */
+  .mobile-container { max-width: 1200px; margin: 0 auto; }
+
+  /* Layout: left sidebar | main content | right profile */
+  .mobile-content {
+    display: grid;
+    grid-template-columns: 220px 1fr 320px;
+    gap: 20px;
+    align-items: start;
+    padding: 32px 20px;
+  }
+
+  /* Ensure individual cards expand to fill their grid cells */
+  .mobile-content > .mobile-card { width: 100%; margin-bottom: 0; }
+
+  /* Left sidebar styling: make a vertical list look */
+  .mobile-content > .mobile-card:first-child {
+    position: sticky;
+    top: 90px;
+    align-self: start;
+  }
+
+  /* Middle column: stack sections with spacing */
+  .mobile-content > .mobile-card:nth-child(2) {
+    grid-column: 2 / 3;
+  }
+
+  /* Right column: profile card */
+  .mobile-content > .mobile-card:nth-last-child(1) {
+    grid-column: 3 / 4;
+    position: sticky;
+    top: 90px;
+  }
+
+  /* Show brand text on desktop header */
+  .brand-text { display: block; }
+  .brand .logo { width:56px; height:56px; }
+
+  /* Hide mobile bottom navigation on desktop */
+  .bottom-nav { display: none; }
+
+  /* Footer spacing on desktop */
+  .main-footer { padding: 28px 0; }
+
+  /* Improve typography on large screens */
+  body { font-size: 16px; }
+
+  /* Reduce card radius and increase gaps for desktop */
+  .mobile-card { border-radius: 12px; padding: 22px; }
+}
+
+/* Removed the global "force stacked layout" override so responsive
+   grid and media queries can take effect on larger screens. Previously
+   this forced a single-column layout on all viewports which broke the
+   desktop/home layout. */
+
+/* Scoped force-mobile helper: only applies if the <body> has class .force-mobile
+   Use by visiting the site with ?mobile=1 (e.g. /?mobile=1) to preview the
+   single-column mobile layout on desktop. This preserves normal responsive
+   behaviour for other users. */
+.force-mobile .mobile-content {
+  display: block !important;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px !important;
+}
+
+.force-mobile .mobile-content > .mobile-card {
+  width: 100% !important;
+  max-width: 900px;
+  margin: 14px auto !important;
+}
+
+.force-mobile .bottom-nav {
+  display: flex !important;
+}
+
+
+/* Medium screens (tablet) - two-column layout */
+@media (min-width: 700px) and (max-width: 999px) {
+  .mobile-container { max-width: 1000px; margin: 0 auto; }
+  .mobile-content {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 18px;
+    padding: 28px 18px;
+  }
+
+  /* Move main area to left column and profile to right */
+  .mobile-content > .mobile-card:first-child { grid-column: 1 / 2; }
+  .mobile-content > .mobile-card:last-child { grid-column: 2 / 3; }
+
+  .bottom-nav { display: none; }
+}
+
+/* Sign Display Area */
+.sign-display {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.sign-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.sign-image.active {
+  border-color: var(--primary-blue);
+  transform: scale(1.1);
+}
+
+.sign-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+}
+
+/* Control Buttons */
+.control-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.control-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background: var(--border-medium);
+}
+
+.control-btn.primary {
+  background: var(--primary-blue);
+  color: white;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-light);
+  max-width: 414px;
+  margin: 0 auto;
+  padding-bottom: var(--safe-area-inset-bottom);
+  box-shadow: var(--shadow-lg);
+}
+
+.bottom-nav-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 100%;
+  padding: 4px 0;
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--primary-blue-light) 100%);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 12px 8px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  font-size: 13px;
+  position: relative;
+}
+
+.bottom-nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: var(--accent-orange);
+  border-radius: 6px;
+  transition: width var(--transition-fast);
+}
+
+.bottom-nav-item .bottom-nav-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  transition: all var(--transition-fast);
+}
+
+.bottom-nav-item:hover {
+  color: var(--text-primary);
+}
+
+.bottom-nav-item:hover .bottom-nav-icon {
+  transform: translateY(-2px);
+  color: var(--text-primary);
+}
+
+.bottom-nav-item.active {
+  color: var(--accent-orange);
+}
+
+.bottom-nav-item.active .bottom-nav-icon {
+  color: var(--accent-orange);
+  transform: translateY(-2px);
+}
+
+.bottom-nav-item.active::after {
+  width: 24px;
+}
+
+.bottom-nav-label {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+/* Search Bar */
+.search-bar {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.search-input:focus {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-card);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Achievement Badges */
+.achievement-card {
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  border: 1px solid #F59E0B;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.achievement-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--secondary-orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.achievement-content {
+  flex: 1;
+}
+
+.achievement-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.achievement-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Settings Toggle */
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Mobile-only improvements: ensure mobile nav & install CTA visible and header compact */
+@media (max-width: 699px) {
+  /* Compact header on phones */
+  .mobile-header { padding: 10px 12px; }
+  .mobile-header h1 { font-size: 18px; }
+  .brand-text { display: none; }
+
+  /* Ensure bottom nav is visible on phones */
+  .bottom-nav { display: block; }
+  .bottom-nav-container { max-width: 100%; padding: 0 8px; }
+  .bottom-nav-item { min-width: 56px; padding: 10px 6px; }
+
+  /* Ensure content has bottom padding to avoid overlap with nav */
+  .mobile-content { padding-bottom: 92px; }
+
+  /* Install banner visible and positioned above bottom nav */
+  #installBanner { display: block !important; }
+    /* position the install banner above the bottom nav and safe area */
+    #installBanner .mobile-card { position: fixed; left: 12px; right: 12px; bottom: calc(var(--bottom-nav-height) + var(--safe-area-inset-bottom) + 12px); z-index: 2100; padding: 12px; border-radius: 12px; }
+  #installBanner .mobile-card .btn { padding: 8px 12px; font-size: 14px; }
+  #installBanner .mobile-card .install-text { font-size: 14px; margin-bottom: 6px; }
+
+  /* Slightly larger bottom nav icons/text for touch targets */
+  .bottom-nav-icon { font-size: 22px; }
+  .bottom-nav-label { font-size: 12px; }
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-label {
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.setting-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  background: var(--border-medium);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-switch.active {
+  background: var(--primary-blue);
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.toggle-switch.active::after {
+  transform: translateX(-20px);
+}
+
+/* Loading States */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-light);
+  border-top: 2px solid var(--primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .mobile-container {
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .mobile-content {
+    padding: 24px;
+  }
+  
+  .quick-actions {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.hidden { display: none; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+
+/* Bottom navigation: visible on small screens or when explicitly forcing mobile
+   preview via body.force-mobile. Removed previous global override that forced
+   the nav on desktop and caused layout issues. */
+
+/* Default: hide bottom nav on larger screens */
+.bottom-nav { display: none; }
+
+/* Mobile / small screens: show bottom nav */
+@media (max-width: 699px) {
+  .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height); z-index: 2000; box-shadow: 0 -6px 30px rgba(16,24,40,0.06); }
+}
+
+/* When previewing mobile on desktop via ?mobile=1 */
+.force-mobile .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height); z-index: 2000; box-shadow: 0 -6px 30px rgba(16,24,40,0.06); }
+
+/* Make sure content leaves room for the fixed nav where it is visible */
+@media (max-width: 699px) {
+  body, .mobile-content { padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-inset-bottom) + 16px); }
+}
+.force-mobile body, .force-mobile .mobile-content { padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-inset-bottom) + 16px) !important; }
+
+/* Tweak active state visuals for the bottom nav to match mockups */
+.bottom-nav-item { color: var(--text-secondary); }
+.bottom-nav-item .bottom-nav-icon { color: var(--text-secondary); }
+.bottom-nav-item.active { color: var(--primary-blue); }
+.bottom-nav-item.active .bottom-nav-icon { color: var(--primary-blue); transform: translateY(-2px); }
+.bottom-nav-item.active::after { width: 40px; height: 4px; background: linear-gradient(90deg, var(--primary-blue), var(--secondary-green)); }
+
+/* Reduce z-index noise on desktop */
+@media (min-width: 900px) { .bottom-nav { display: none !important; } }
+
+/* Force bottom navigation visible on desktop to match mobile mockup */
+.bottom-nav {
+  display: flex !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 100% !important;
+  max-width: 414px !important;
+  height: var(--bottom-nav-height) !important;
+  z-index: 2000 !important;
+  box-shadow: 0 -6px 30px rgba(16,24,40,0.06) !important;
+}
+}
