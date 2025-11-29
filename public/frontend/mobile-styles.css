@@ -726,7 +726,7 @@ html, body { overflow-x: hidden; }
 }
 
 /* Force any usage of the logo image to a small size to avoid layout breakage */
-img[src$="/frontend/logo.png"], img[src$="logo.png"] {
+img[src$="/frontend/app-icon-192.png"], img[src$="app-icon-192.png"], .brand-logo {
   width: 32px !important;
   height: 32px !important;
   max-width: 32px !important;
@@ -821,7 +821,7 @@ img[src$="/frontend/logo.png"], img[src$="logo.png"] {
 }
 
 /* Constrain images inside sign display / output to a reasonable size */
-.sign-display img, #output img, .sign-container img {
+.sign-display img, .sign-container img, .output-section:not(.large-sign-view) #output img {
   width: 80px !important;
   height: 80px !important;
   max-width: 80px !important;
@@ -1192,6 +1192,188 @@ img[src$="/frontend/logo.png"], img[src$="logo.png"] {
   margin-right: auto !important;
 }
 
+/* Welcome page centered frame for converted signs */
+.welcome-frame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 18px 12px;
+}
+
+.welcome-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1320px; /* allow the card to expand enough for large images when wide */
+  min-height: 420px; /* provide vertical space so center is visually balanced */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  border: 3px solid rgba(255,255,255,0.08);
+  background-clip: padding-box;
+  position: relative; /* for absolute positioned controls inside card */
+}
+
+/* Mobile-specific: ensure the sign display is centered inside the mobile frame/card
+   (not centered in the wider site viewport) and add a distinct border color.
+   This keeps the sign inside the phone mockup and gives it a visible edge. */
+@media (max-width: 480px) {
+  .mobile-container .welcome-card .sign-display {
+    width: auto !important;
+    max-width: 360px !important; /* keep the sign inside typical phone width */
+    margin: 0 auto !important; /* center in the phone frame */
+    padding: 8px !important; /* nice padding inside the border */
+    border-radius: 12px !important;
+    border: 2px solid var(--secondary-orange) !important; /* distinct border color for sign-view */
+    background: rgba(255,255,255,0.02) !important; /* subtle background to show the sign area */
+    box-shadow: none !important; /* avoid large shadows that make it look like a site-level modal */
+    box-sizing: border-box !important;
+  }
+
+  /* Make sure large images inside the sign-display scale down to fit the bordered area */
+  .mobile-container .welcome-card .sign-image.large,
+  .mobile-container .welcome-card .large-sign-wrapper .sign-image.large {
+    max-width: 100% !important;
+    max-height: calc(80vh - 120px) !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* When desktop preview forces the mobile layout, apply same centering and border rules. */
+  width: auto !important;
+  max-width: 360px !important; /* keep the sign inside typical phone width */
+  margin: 0 auto !important; /* center in the phone frame */
+  padding: 8px !important; /* nice padding inside the border */
+  border-radius: 12px !important;
+body.force-mobile .mobile-container .welcome-card .sign-display {
+    border: 2px solid var(--secondary-orange) !important; /* distinct border color for sign-view */
+  background: rgba(255,255,255,0.02) !important; /* subtle background to show the sign area */
+  box-shadow: none !important; /* avoid large shadows that make it look like a site-level modal */
+  box-sizing: border-box !important;
+}
+
+body.force-mobile .mobile-container .welcome-card .sign-image.large,
+body.force-mobile .mobile-container .welcome-card .large-sign-wrapper .sign-image.large {
+  max-width: 100% !important;
+  max-height: calc(80vh - 120px) !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+.welcome-card.has-sequence .placeholder-overlay { display: none; }
+.placeholder-overlay {
+  position: absolute;
+  inset: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+.placeholder-icon { opacity: 0.9; }
+.placeholder-text { font-size: 18px; font-weight: 600; color: var(--text-secondary); }
+
+/* Close button in the welcome card */
+.frame-close-btn {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  background: rgba(255,255,255,0.06);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 25;
+}
+.frame-close-btn:hover { background: rgba(255,255,255,0.12); }
+
+/* Toggle button to enable/disable large view */
+.frame-toggle-btn {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  background: rgba(255,255,255,0.06);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  z-index: 25;
+}
+.frame-toggle-btn[aria-pressed="true"] {
+  background: linear-gradient(90deg, var(--accent-orange), var(--primary-blue));
+  color: #fff;
+}
+
+.frame-autoopen-label {
+  position: absolute;
+  left: 64px;
+  top: 18px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+.frame-autoopen-label input[type='checkbox']{ width:18px;height:18px; }
+.frame-help-btn { position: absolute; left: 220px; top: 20px; width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:var(--text-secondary); cursor:help; z-index:25; }
+
+/* Ensure the sign display inside the welcome frame is centered */
+.welcome-frame .sign-display {
+  width: 100%;
+  min-height: 360px; /* make space for the large image */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* Ensure the card and frame remain centered vertically in the viewport for the welcome page */
+@media (min-width: 700px) {
+  .welcome-frame {
+    min-height: calc(100vh - var(--header-height) - var(--bottom-nav-height) - 40px);
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.welcome-card .card.output-section { width:100%; }
+
+/* The main large image inside the welcome frame should be 1280x1280 (scaled on small screens) */
+.welcome-frame .sign-image.large, .welcome-frame .large-sign-wrapper .sign-image.large {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 200px);
+  object-fit: contain;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  box-shadow: 0 18px 36px rgba(0,0,0,0.36);
+}
+
+/* Provide a visually padded thumbnail row inside the frame */
+.welcome-frame .sign-thumbs { margin-top: 12px; justify-content: center; }
+.welcome-frame .sign-image.thumb { width: 96px; height: 96px; }
+
+
 .output-section .sign-display {
   min-height: 160px;
   max-width: 360px !important;
@@ -1247,7 +1429,17 @@ img[src$="/frontend/logo.png"], img[src$="logo.png"] {
 
 /* Constrain output images to inline small thumbnails centered */
 #output, .sign-container { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; }
-#output img { width:64px !important; height:64px !important; }
+#output img { /* keep default small size only when NOT in large-sign-view (overridden below) */
+  width:64px !important; height:64px !important; }
+
+/* When the larger welcome-view is active, prevent the small-thumbnail rule from forcing all images small.
+   Scope the small rule above to only apply for non-large views; this rule resets sizing for large mode. */
+.output-section.large-sign-view #output img {
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+}
 
 
 /* Authentication page customizations */
@@ -1516,6 +1708,104 @@ img[src$="/frontend/logo.png"], img[src$="logo.png"] {
   background: var(--bg-secondary);
   padding: 8px 16px;
   border-radius: var(--radius-md);
+}
+
+/* Large centered view for converted text -> sign on welcome page */
+.output-section.large-sign-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* override the small max-width used for normal mini output to allow large display */
+  max-width: calc(100vw - 32px) !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 18px !important;
+}
+
+.output-section.large-sign-view .sign-display {
+  width: 100%;
+  padding: 24px 0;
+}
+
+.output-section.large-sign-view #output {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.output-section.large-sign-view .sign-container {
+  gap: 16px;
+  justify-content: center;
+}
+
+.output-section.large-sign-view .sign-image {
+  /* Fill the welcome card area responsively while preserving aspect ratio. */
+  width: 100% !important;
+  height: 100% !important;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 160px);
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.output-section.large-sign-view .sign-image.small {
+  width: 96px;
+  height: 96px;
+  opacity: 0.6;
+}
+
+.output-section.large-sign-view .sign-subtitle {
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* Large image wrapper and thumbnail row */
+.large-sign-wrapper {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  height: min(70vh, 900px); /* ensure a substantial height so the main image has space to fill */
+}
+.large-sign-wrapper .sign-image.large {
+  /* Make the large image fill the wrapper while staying responsive */
+  width: 100% !important;
+  height: 100% !important;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 160px);
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  box-shadow: 0 18px 36px rgba(0,0,0,0.36);
+}
+.sign-thumbs {
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-top: 8px;
+}
+.sign-thumbs .sign-image.thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Keep thumbnails horizontally aligned in the big welcome view and prevent wrapping to vertical column */
+.output-section.large-sign-view .sign-thumbs {
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Control Buttons */

@@ -64,19 +64,16 @@ document.addEventListener('DOMContentLoaded', function(){
         try{
             // If requesting words category, prefer folder-based signs (images in storage/signs/words)
             let resp;
-            if (true && (new URLSearchParams({}).toString(), 'words') && ("words" === 'words')) {
-                // call folder endpoint which returns all images from storage/signs/words
-                resp = await fetch(`/api/v1/signs/from-folder/words?language=${encodeURIComponent(lang)}`);
-            } else {
-                resp = await fetch(`/api/v1/signs?category=words&language=${encodeURIComponent(lang)}&per_page=50`);
-            }
+            // Prefer the database-backed signs library so filenames are not parsed directly
+            // (pre-index folder contents to DB using `php scripts/index_sign_images.php`).
+            resp = await fetch(`/api/v1/signs?category=words&language=${encodeURIComponent(lang)}&per_page=50`);
             if(!resp.ok) throw new Error('فشل في جلب الإشارات');
             const json = await resp.json();
             signs = json.signs || json.results || [];
             if(!Array.isArray(signs)) signs = [];
 
             if(signs.length === 0){
-                kbMessage.textContent = 'لا توجد إشارات محفوظة لهذه اللغة.';
+                kbMessage.innerHTML = 'لا توجد إشارات محفوظة لهذه اللغة. يمكنك فهرسة الصور من المجلد عبر تشغيل الأمر: <code>php scripts/index_sign_images.php</code> ثم إعادة المحاولة.';
                 return;
             }
 
@@ -107,8 +104,9 @@ document.addEventListener('DOMContentLoaded', function(){
                 const caption = document.createElement('div');
                 caption.className = 'kb-caption';
                 caption.style = 'font-size:0.85rem;color:var(--text-secondary);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;';
-                // Prefer explicit text property, otherwise derive from filename
-                let label = (s.text && s.text.trim()) ? s.text.trim() : '';
+                // Prefer explicit text property coming from the DB record (pre-indexed) and
+                // fall back to `key` if available; only if neither exists, derive from filename.
+                let label = (s.text && s.text.trim()) ? s.text.trim() : ((s.key && s.key.trim()) ? s.key.trim() : '');
                 if (!label) {
                     const ds = img.getAttribute('data-src') || img.src || '';
                     try {

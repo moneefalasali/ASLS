@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             SignAssetSeeder::class,
             LetterSignSeeder::class,
             WordSignSeeder::class,
+            FileBasedSignSeeder::class,
             DemoUserSeeder::class,
         ]);
     }

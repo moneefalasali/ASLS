@@ -80,8 +80,28 @@ if (window.__AISL_APP_LOADED) {
         
         // Initialize legacy functionality
         this.initLegacyFeatures();
+
+        // Load signs from storage folder (words) so they're available in-app
+        this.loadSignsFromFolder();
         
         console.log('✅ AISL App initialized successfully');
+    }
+
+    async loadSignsFromFolder() {
+        try {
+            // Prefer the DB-backed library rather than reading artifact filenames directly.
+            // This relies on signs having been indexed into `sign_assets` using the
+            // `scripts/index_sign_images.php` helper.
+            const resp = await fetch('/api/v1/signs?category=words&language=ar&per_page=50');
+            if (!resp.ok) return;
+            const json = await resp.json();
+            if (json && json.signs) {
+                this.state.folderSigns = json.signs;
+                console.log('Loaded DB signs (words) count', this.state.folderSigns.length);
+            }
+        } catch (error) {
+            console.warn('Failed to load DB signs (words)', error);
+        }
     }
 
     // Ensure any anchor or link that points to /logout performs a proper POST with CSRF
@@ -660,7 +680,8 @@ if (window.__AISL_APP_LOADED) {
         // Update sign container for new mobile layout
         // Prefer sign container inside the currently visible tab (if any),
         // otherwise fall back to global ids used elsewhere.
-        let signContainer = document.querySelector('.tab-content:not([style*="display: none"]) .sign-container');
+        // Prefer the dedicated output container if present (used on welcome page)
+        let signContainer = document.getElementById('output') || document.querySelector('.tab-content:not([style*="display: none"]) .sign-container');
         if (!signContainer) {
             signContainer = document.getElementById('signContainer') || document.getElementById('signList');
         }
@@ -683,6 +704,43 @@ if (window.__AISL_APP_LOADED) {
         }
 
         if (signContainer) {
+            // If the page is using a larger centered output section, render a big main image
+            const outputSection = document.querySelector('.output-section');
+            const largeMode = outputSection && outputSection.classList.contains('large-sign-view');
+
+            if (largeMode) {
+                // Main large image
+                signContainer.innerHTML = '';
+                const mainWrapper = document.createElement('div');
+                mainWrapper.className = 'large-sign-wrapper';
+                const mainImg = document.createElement('img');
+                const firstSign = this.state.signSequence[ this.state.currentIndex ] || this.state.signSequence[0];
+                mainImg.src = firstSign ? encodeURI(firstSign.src || '/storage/signs/placeholder.png') : '/storage/signs/placeholder.png';
+                mainImg.alt = firstSign ? firstSign.text : '';
+                mainImg.className = 'sign-image large';
+                mainWrapper.appendChild(mainImg);
+                signContainer.appendChild(mainWrapper);
+
+                // Thumbnails row
+                const thumbs = document.createElement('div');
+                thumbs.className = 'sign-thumbs';
+                this.state.signSequence.forEach((sign, idx)=>{
+                    const t = document.createElement('img');
+                    t.src = sign.src ? encodeURI(sign.src) : '/storage/signs/placeholder.png';
+                    t.alt = sign.text || '';
+                    t.className = 'sign-image thumb';
+                    t.style.opacity = idx === this.state.currentIndex ? '1' : '0.6';
+                    t.addEventListener('click', ()=>{
+                        this.state.currentIndex = idx; this.showSign(idx);
+                        // swap main image
+                        mainImg.src = t.src;
+                        mainImg.alt = t.alt;
+                    });
+                    thumbs.appendChild(t);
+                });
+                signContainer.appendChild(thumbs);
+                return;
+            }
             // Apply container direction class so images render LTR or RTL
             signContainer.classList.remove('dir-ltr', 'dir-rtl');
             signContainer.classList.add(effectiveDir === 'ltr' ? 'dir-ltr' : 'dir-rtl');
@@ -730,6 +788,16 @@ if (window.__AISL_APP_LOADED) {
                 img.classList.toggle('active', i === index);
             });
         }
+        // If the welcome page large view is active, update the large main image and thumbnail opacities
+        try{
+            const outputSection = document.querySelector('.output-section');
+            if(outputSection && outputSection.classList.contains('large-sign-view')){
+                const mainImg = document.querySelector('#output .large-sign-wrapper .sign-image.large');
+                if(mainImg){ mainImg.src = sign.src || '/storage/signs/placeholder.png'; mainImg.alt = sign.text || ''; }
+                const thumbImgs = document.querySelectorAll('#output .sign-image.thumb');
+                thumbImgs.forEach((im,i)=>{ im.style.opacity = i===index ? '1' : '0.6'; im.classList.toggle('active', i===index); });
+            }
+        }catch(e){ console.warn('showSign update large view failed', e); }
         
         if (this.elements.subtitles) {
             this.elements.subtitles.textContent = sign.text;

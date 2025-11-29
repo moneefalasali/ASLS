@@ -1,44 +1,29 @@
-@font-face {
-    font-family: 'Cairo';
-    src: local('Cairo Light'), local('Cairo-Light'),
-         url('cairo-light.woff2') format('woff2');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
+/*
+ Temporarily disabled @font-face declarations because the local woff2 files
+ are missing/corrupted (0 bytes). This prevents the browser attempting to
+ download and decode empty font files which caused the "Failed to decode"
+ warnings during development.
+
+ To restore the Cairo webfont behavior:
+ 1. Download the proper Cairo .woff2 files (weights 400/600/700) into this folder
+    (public/frontend/fonts/cairo/) and ensure they're non-empty.
+ 2. Replace this file with the original @font-face rules or remove these comments.
+
+ For now the app will use system fallback fonts below.
+*/
+
+/* Use safe system font fallbacks while webfonts are unavailable */
+:root {
+    --app-font-family: "Segoe UI", "Noto Naskh Arabic", Tahoma, Arial, sans-serif;
 }
 
-@font-face {
-    font-family: 'Cairo';
-    src: local('Cairo Regular'), local('Cairo-Regular'),
-         url('cairo-regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+body, input, textarea, select, button {
+    font-family: var(--app-font-family);
 }
 
+/* In rare cases other rules reference 'Cairo' explicitly; ensure a fallback
+   by mapping the Cairo family name to system fonts via a small rule for safety. */
 @font-face {
     font-family: 'Cairo';
-    src: local('Cairo Medium'), local('Cairo-Medium'),
-         url('cairo-medium.woff2') format('woff2');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Cairo';
-    src: local('Cairo SemiBold'), local('Cairo-SemiBold'),
-         url('cairo-semibold.woff2') format('woff2');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Cairo';
-    src: local('Cairo Bold'), local('Cairo-Bold'),
-         url('cairo-bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+    src: local('Segoe UI');
 }

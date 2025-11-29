@@ -1,5 +1,5 @@
 <?php
-$path = __DIR__ . '/../public/frontend/logo.png';
+$path = __DIR__ . '/../public/frontend/app-icon-192.png';
 if (!file_exists($path)) { echo "ERROR: file not found: $path\n"; exit(2); }
 $img = @imagecreatefromstring(file_get_contents($path));
 if (!$img) { echo "ERROR: failed to load image (GD support required)\n"; exit(3); }

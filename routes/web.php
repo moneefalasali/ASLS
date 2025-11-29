@@ -78,6 +78,11 @@ Route::middleware(['auth','admin'])->prefix('admin')->name('admin.')->group(func
     Route::post('users/{user}/toggle', [UserController::class,'toggle'])->name('users.toggle');
     Route::get('uploads', [UploadController::class,'index'])->name('uploads.index');
     Route::get('uploads/{upload}', [UploadController::class,'show'])->name('uploads.show');
+    // Icon and indexing tools
+    Route::get('icon-tools', [\App\Http\Controllers\Admin\IconController::class, 'index'])->name('icon.tools');
+    Route::post('icon-tools/reindex', [\App\Http\Controllers\Admin\IconController::class, 'reindex'])->name('icon.reindex');
+    Route::post('icon-tools/purge-sw', [\App\Http\Controllers\Admin\IconController::class, 'purgeSW'])->name('icon.purge_sw');
+    Route::post('icon-tools/upload', [\App\Http\Controllers\Admin\IconController::class, 'upload'])->name('icon.upload');
 });
 
 

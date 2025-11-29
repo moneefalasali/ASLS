@@ -5,9 +5,8 @@ const urlsToCache = [
     '/frontend/styles.css',
     '/frontend/app.js',
     '/frontend/manifest.json',
-    '/frontend/icon-192.png',
-    '/frontend/icon-512.png',
-    '/frontend/icon-144.png'
+    '/frontend/app-icon-192.png',
+    '/frontend/app-icon-512.png'
 ];
 
 // Install event - cache resources
@@ -140,8 +139,8 @@ self.addEventListener('push', (event) => {
     const title = data.title || 'محول لغة الإشارة';
     const options = {
         body: data.body || 'لديك إشعار جديد',
-        icon: '/frontend/icon-192.png',
-        badge: '/frontend/icon-192.png',
+        icon: '/frontend/app-icon-192.png',
+        badge: '/frontend/app-icon-192.png',
         vibrate: [200, 100, 200],
         data: data.url || '/frontend/'
     };

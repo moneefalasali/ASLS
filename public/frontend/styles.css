@@ -179,7 +179,7 @@
 }
 
 .text-input {
-    width: 100%;
+    width: 75%;
     padding: 15px;
     border: 2px solid var(--border);
     border-radius: 8px;
@@ -367,18 +367,21 @@
 }
 
 .sign-display {
-    min-height: 400px;
+    min-height: 600px;
     background: var(--background);
     border-radius: 12px;
     padding: 30px;
     margin-bottom: 20px;
+   align-items: center;
+
 }
 
 .sign-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
+    min-height: 600px;
+    
 }
 
 .placeholder {
@@ -496,9 +499,9 @@ html, body { direction: rtl; }
     .sign-display { min-height: 320px; }
 }
 
-@media (max-width: 699px) {
-    .container { padding: 12px; }
-    .sign-image { max-height: 240px; }
+@media (max-width: 1000px) {
+    .container { padding: 0px; }
+    .sign-image { max-height: 700px; }
     .tabs { gap:6px }
 }
 

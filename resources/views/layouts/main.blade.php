@@ -31,14 +31,14 @@
 
 
       <!-- Right: logo -->
-      <div class="header-right">
+        <div class="header-right">
         <div class="header-icon">
-          <img src="/frontend/logo.png" alt="AISL logo" class="brand-logo" onerror="this.style.display='none'" />
+          <img src="/frontend/app-icon-192.png" alt="AISL logo" class="brand-logo" onerror="this.style.display='none'" />
         </div>
         @yield('header-right')
         <!-- Compact mode toggle -->
         <button id="compactToggle" class="header-btn" title="وضع مضغوط" aria-label="وضع مضغوط" style="margin-left:8px; padding:6px 10px; font-weight:600;" type="button">
-          <span id="compactLabel">وضع مضغوط</span>
+          <span id="compactLabel"> ASLS</span>
         </button>
       </div>
     </header>
@@ -110,10 +110,29 @@
       document.documentElement.lang = 'ar';
 
       // register service worker and handle PWA install prompt centrally
-      (function(){
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('/sw.js').catch(()=>{});
-        }
+        (function(){
+          if ('serviceWorker' in navigator) {
+            // Normal registration (continue to register as before but also wire up update handling)
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+              try {
+                // If a waiting SW is present, skip waiting so the new one activates immediately
+                if (reg.waiting) {
+                  reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }
+                // If a new service worker is installing, make it skip waiting once installed
+                reg.addEventListener('updatefound', () => {
+                  const newSW = reg.installing;
+                  if (newSW) {
+                    newSW.addEventListener('statechange', () => {
+                      if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                        newSW.postMessage({ type: 'SKIP_WAITING' });
+                      }
+                    });
+                  }
+                });
+              } catch (e) { /* ignore registration update wiring errors */ }
+            }).catch(()=>{});
+          }
 
         let deferredPrompt = null;
         const installBanner = document.getElementById('installBanner');
@@ -152,10 +171,10 @@
             const updateButton = ()=>{
               if (document.body.classList.contains('compact-ui')) {
                 btn.style.background = 'rgba(255,255,255,0.12)';
-                if (label) label.textContent = 'مضغوط (مفعل)';
+                if (label) label.textContent = ' ASLS ';
               } else {
                 btn.style.background = 'rgba(255,255,255,0.06)';
-                if (label) label.textContent = 'وضع مضغوط';
+                if (label) label.textContent = 'AsLs ';
               }
             };
             btn.addEventListener('click', ()=>{
@@ -184,5 +203,28 @@
 
     <!-- Frontend client script -->
   <script src="/frontend/app.js?v={{ file_exists(public_path('frontend/app.js')) ? filemtime(public_path('frontend/app.js')) : time() }}" defer></script>
+
+  {{-- Development helper: automatically unregister service worker and clear caches on local environment so CSS/JS changes show immediately. --}}
+  @if (app()->environment('local'))
+  <script>
+    (async function(){
+      try{
+        if (navigator && navigator.serviceWorker) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const r of regs) try{ await r.unregister(); } catch(e){}
+        }
+        if (window.caches && window.caches.keys) {
+          const keys = await caches.keys();
+          for (const k of keys) {
+            // Only delete our SW caches to avoid clearing unrelated site caches
+            if (k && k.startsWith('aisl-')) {
+              try { await caches.delete(k); } catch(e){}
+            }
+          }
+        }
+      }catch(e){}
+    })();
+  </script>
+  @endif
   </body>
 </html>

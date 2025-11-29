@@ -209,8 +209,9 @@ class SignAsset extends Model
     {
         if ($lang === 'en') {
             // English keys may be stored uppercased; match case-insensitively
+            // Escape reserved column names like `key` using backticks for compatibility with MySQL
             $asset = self::where('language', $lang)
-                         ->whereRaw('LOWER(key) = ?', [strtolower($word)])
+                         ->whereRaw('LOWER(`key`) = ?', [strtolower($word)])
                          ->where('active', true)
                          ->first();
         } else {

@@ -1,4 +1,6 @@
 // AISL PWA Service Worker
+// IMPORTANT: bump these versions on deploy so clients receive the new SW and caches get updated.
+// Use a build task or manually update these constants for each production deployment.
 const CACHE_NAME = 'aisl-v1.2.0';
 const STATIC_CACHE = 'aisl-static-v1.2.0';
 const DYNAMIC_CACHE = 'aisl-dynamic-v1.2.0';
@@ -332,8 +334,8 @@ self.addEventListener('push', event => {
   
   const options = {
     body: 'لديك رسالة جديدة في AISL',
-    icon: '/frontend/icon-192.png',
-    badge: '/frontend/badge-72.png',
+    icon: '/frontend/app-icon-192.png',
+    badge: '/frontend/app-icon-192.png',
     tag: 'aisl-notification',
     data: {
       url: '/conversations'
@@ -421,4 +423,4 @@ self.addEventListener('message', event => {
   }
 });
 
-console.log('[SW] Service worker script loaded successfully');
+console.log('[SW] Service worker script loaded successfully —', CACHE_NAME);

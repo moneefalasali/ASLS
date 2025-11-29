@@ -34,6 +34,10 @@ class SignController extends Controller
             
             // Get sign sequence with enhanced mapping
             $sequence = SignAsset::mapTextToSequence($processedText, $lang);
+            // If no sequence returned from DB mapping, try folder fallback
+            if (empty($sequence)) {
+                $sequence = $this->mapTextToSequenceFromFolder($processedText, $lang);
+            }
             
             // Apply speed and style modifications
             $sequence = $this->applySequenceModifications($sequence, $speed, $style);
@@ -61,17 +65,40 @@ class SignController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Text conversion failed', [
+            Log::warning('Text conversion failed - attempting folder-based fallback', [
                 'error' => $e->getMessage(),
                 'text' => $text,
                 'language' => $lang
             ]);
 
-            return response()->json([
-                'success' => false,
-                'error' => 'فشل في تحويل النص إلى لغة الإشارة',
-                'message' => 'حدث خطأ أثناء معالجة النص'
-            ], 500);
+            try {
+                $sequence = $this->mapTextToSequenceFromFolder($processedText, $lang);
+                $sequence = $this->applySequenceModifications($sequence, $speed, $style);
+                return response()->json([
+                    'success' => true,
+                    'sequence' => $sequence,
+                    'metadata' => [
+                        'original_text' => $text,
+                        'processed_text' => $processedText,
+                        'language' => $lang,
+                        'speed' => $speed,
+                        'style' => $style,
+                        'total_signs' => count($sequence),
+                        'estimated_duration' => $this->calculateDuration($sequence, $speed),
+                        'fallback' => 'folder'
+                    ]
+                ]);
+            } catch (\Exception $ex) {
+                Log::error('Folder fallback mapping failed for text conversion', [
+                    'error' => $ex->getMessage(),
+                    'text' => $text
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'error' => 'فشل في تحويل النص إلى لغة الإشارة',
+                    'message' => 'حدث خطأ أثناء معالجة النص'
+                ], 500);
+            }
         }
     }
 
@@ -121,6 +148,10 @@ class SignController extends Controller
 
             // Convert transcribed text to sign sequence
             $sequence = SignAsset::mapTextToSequence($transcribed, $lang);
+            // If DB mapping yields nothing, fallback to folder mapping
+            if (empty($sequence)) {
+                $sequence = $this->mapTextToSequenceFromFolder($transcribed, $lang);
+            }
             
             // Apply default modifications for audio-derived sequences
             $sequence = $this->applySequenceModifications($sequence, 'normal', 'casual');
@@ -149,17 +180,41 @@ class SignController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Audio conversion failed', [
+            Log::warning('Audio conversion failed - attempting folder-based fallback', [
                 'error' => $e->getMessage(),
                 'file_name' => $originalName,
                 'language' => $lang
             ]);
 
-            return response()->json([
-                'success' => false,
-                'error' => 'فشل في تحويل الصوت إلى لغة الإشارة',
-                'message' => 'حدث خطأ أثناء معالجة الملف الصوتي'
-            ], 500);
+            try {
+                $sequence = $this->mapTextToSequenceFromFolder($transcribed, $lang);
+                $sequence = $this->applySequenceModifications($sequence, 'normal', 'casual');
+                return response()->json([
+                    'success' => true,
+                    'upload_id' => $upload->id ?? null,
+                    'transcription' => $transcribed,
+                    'sequence' => $sequence,
+                    'metadata' => [
+                        'audio_path' => $upload->path ?? null,
+                        'language' => $lang,
+                        'file_size' => $upload->file_size ?? null,
+                        'duration' => $upload->duration ?? null,
+                        'total_signs' => count($sequence),
+                        'confidence' => $this->calculateTranscriptionConfidence($transcribed),
+                        'fallback' => 'folder'
+                    ]
+                ]);
+            } catch (\Exception $ex) {
+                Log::error('Folder fallback mapping failed for audio conversion', [
+                    'error' => $ex->getMessage(),
+                    'file_name' => $originalName
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'error' => 'فشل في تحويل الصوت إلى لغة الإشارة',
+                    'message' => 'حدث خطأ أثناء معالجة الملف الصوتي'
+                ], 500);
+            }
         }
     }
 
@@ -610,7 +665,9 @@ class SignController extends Controller
             if (!in_array($ext, $allowed)) continue;
 
             $name = pathinfo($f, PATHINFO_FILENAME);
-            $text = $name;
+            // Sanitize file-based text labels: replace underscores/hyphens with spaces
+            // so users don't see filename delimiters in UI.
+            $text = preg_replace('/[_\-]+/', ' ', $name);
 
             // Basic detection of language based on presence of arabic letters
             $detectedLang = preg_match('/\p{Arabic}/u', $name) ? 'ar' : 'en';
@@ -626,5 +683,153 @@ class SignController extends Controller
         }
 
         return response()->json(['success' => true, 'signs' => $results]);
+    }
+
+    /**
+     * Map processed text to sign sequence by searching the public storage folder (fallback)
+     */
+    private function mapTextToSequenceFromFolder(string $processedText, string $lang): array
+    {
+        // Determine tokens: words split by spaces
+        $tokens = preg_split('/\s+/', trim($processedText));
+
+        $results = [];
+        $searchDirectories = [
+            storage_path('app/public/signs/words'),
+            storage_path('app/public/signs/' . ($lang === 'en' ? 'english' : 'arabic')),
+            public_path('storage/signs/words'),
+            public_path('storage/signs/' . ($lang === 'en' ? 'english' : 'arabic')),
+            public_path('storage/signs')
+        ];
+
+        foreach ($tokens as $token) {
+            $token = trim($token);
+            if ($token === '') continue;
+            $found = false;
+            // Try DB first - direct key or text matches (supports transliterated filenames mapped to keys)
+            try {
+                $asset = \App\Models\SignAsset::where('language', $lang)
+                    ->where('active', true)
+                    ->where(function($q) use ($token) {
+                        $q->where('key', $token)->orWhere('text', $token);
+                    })->first();
+                if ($asset) {
+                    $src = $this->normalizeSrc($asset->src);
+                    $results[] = [
+                        'key' => $asset->key,
+                        'text' => $asset->text ?? $asset->key,
+                        'language' => $asset->language,
+                        'src' => $src,
+                        'category' => $asset->category ?? 'words',
+                        'type' => $asset->type ?? 'image',
+                        'duration' => 1000
+                    ];
+                    continue;
+                }
+            } catch (\Exception $e) {
+                // ignore DB errors and fallback to folder lookup
+            }
+            // Try to find a full token match first (word-level)
+            foreach ($searchDirectories as $dir) {
+                if (!is_dir($dir)) continue;
+                $files = scandir($dir);
+                foreach ($files as $f) {
+                    if (in_array($f, ['.', '..'])) continue;
+                    $name = pathinfo($f, PATHINFO_FILENAME);
+                    if (mb_strtolower($name) === mb_strtolower($token)) {
+                        // Build a normalized public src path (use /storage/signs/...)
+                        $subPath = '';
+                        if (strpos($dir, 'storage' . DIRECTORY_SEPARATOR . 'signs') !== false) {
+                            $subStart = strpos($dir, 'storage' . DIRECTORY_SEPARATOR . 'signs');
+                            $subPath = str_replace('\\', '/', substr($dir, $subStart));
+                        }
+                        // Ensure /storage/signs/<rest>
+                        $src = '/storage/signs' . ($subPath ? '/' . trim(str_replace('storage/signs', '', $subPath), '\\/') : '') . '/' . $f;
+                        $src = preg_replace('#/+#','/',$src);
+                        // Determine category by folder name
+                        $category = 'words';
+                        if (stripos($dir, 'letters') !== false || stripos($dir, 'english') !== false || stripos($dir, 'arabic') !== false) {
+                            $category = 'letters';
+                        }
+                        $results[] = [
+                            'key' => $name,
+                            'text' => $token,
+                            'language' => $lang,
+                            'src' => $src,
+                            'category' => $category,
+                            'type' => 'image',
+                            'duration' => 1000
+                        ];
+                        $found = true;
+                        break 2;
+                    }
+                }
+            }
+
+            // If nothing found for full token, and token is multiple characters, try splitting into characters
+            if (!$found && mb_strlen($token) > 1) {
+                $chars = preg_split('//u', $token, -1, PREG_SPLIT_NO_EMPTY);
+                foreach ($chars as $char) {
+                    if (trim($char) === '') continue;
+                    $charFound = false;
+                    foreach ($searchDirectories as $dir) {
+                        if (!is_dir($dir)) continue;
+                        $files = scandir($dir);
+                        foreach ($files as $f) {
+                            if (in_array($f, ['.', '..'])) continue;
+                            $name = pathinfo($f, PATHINFO_FILENAME);
+                            if (mb_strtolower($name) === mb_strtolower($char)) {
+                                // construct public src path
+                                $subPath = '';
+                                if (strpos($dir, 'storage' . DIRECTORY_SEPARATOR . 'signs') !== false) {
+                                    $subStart = strpos($dir, 'storage' . DIRECTORY_SEPARATOR . 'signs');
+                                    $subPath = str_replace('\\', '/', substr($dir, $subStart));
+                                }
+                                $src = '/storage/signs' . ($subPath ? '/' . trim(str_replace('storage/signs', '', $subPath), '\\/') : '') . '/' . $f;
+                                $src = preg_replace('#/+#','/',$src);
+                                $results[] = [
+                                    'key' => $name,
+                                    'text' => $char,
+                                    'language' => $lang,
+                                    'src' => $src,
+                                    'category' => 'letters',
+                                    'type' => 'image',
+                                    'duration' => 1000
+                                ];
+                                $charFound = true;
+                                break 2;
+                            }
+                        }
+                    }
+                    if (!$charFound) {
+                        $results[] = [
+                            'key' => $char,
+                            'text' => $char,
+                            'language' => $lang,
+                            'src' => '/storage/signs/placeholder.png',
+                            'category' => 'letters',
+                            'type' => 'image',
+                            'duration' => 1000
+                        ];
+                    }
+                }
+                continue;
+            }
+
+            // If we reach here and nothing was found for this token, add a placeholder for the token
+            if (!$found) {
+                $results[] = [
+                    'key' => $token,
+                    'text' => $token,
+                    'language' => $lang,
+                    'src' => '/storage/signs/placeholder.png',
+                    'category' => 'words',
+                    'type' => 'image',
+                    'duration' => 1000
+                ];
+            }
+        }
+
+        return $results;
     }
 }

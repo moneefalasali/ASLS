@@ -1,6 +1,6 @@
 <?php
 // Simple average color extractor for a PNG/JPG logo
-$path = __DIR__ . '/../public/frontend/logo.png';
+$path = __DIR__ . '/../public/frontend/app-icon-192.png';
 if (!file_exists($path)) {
     echo "ERROR: file not found: $path\n";
     exit(2);

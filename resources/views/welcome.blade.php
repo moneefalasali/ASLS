@@ -65,7 +65,9 @@
         </div>
     </div>
 
-    <div class="card output-section">
+    <div class="welcome-frame">
+        <div class="welcome-card">
+            <div class="card output-section">
         <div class="output-header">
             <h2>نتيجة التحويل</h2>
             <div class="controls">
@@ -75,9 +77,22 @@
             </div>
         </div>
 
-        <div class="sign-display">
-            <div class="sign-container" id="output"></div>
+        <div class="mobile-card large">
+            <div class="mobile-card large" id="output">
+                <!-- initial placeholder so the welcome card shows a centered large image by default -->
+                <div class="large-sign-wrapper">
+                    <div class="placeholder-overlay" aria-hidden="true">
+                        <div class="placeholder-icon" aria-hidden="true">
+                            <!-- simple sign-hand icon (decorative) -->
+
+                        </div>
+                        <div class="placeholder-text">سيتم عرض الإشارة هنا</div>
+                    </div>
+                </div>
+            </div>
             <div class="subtitles" id="subtitle"></div>
+        </div>
+            </div>
         </div>
     </div>
 
@@ -98,17 +113,60 @@
         });
 
         document.getElementById('convert').addEventListener('click', async ()=>{
-            const text = document.getElementById('text').value.trim();
-            const language = document.getElementById('language').value;
-            if(!text) return alert('رجاءً أدخل نصًا');
-            const resp = await fetch(apiConvertText, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,language})});
-            const json = await resp.json();
-            sequence = json.sequence || [];
-            // Prefer whole-word signs when possible by collapsing character runs
-            if (window.collapseCharactersToWordSigns) {
-                try { sequence = await window.collapseCharactersToWordSigns(sequence, language); } catch(e){ console.warn('collapseCharactersToWordSigns failed', e); }
+            try{
+                const text = document.getElementById('text').value.trim();
+                const language = document.getElementById('language').value;
+                if(!text) return alert('رجاءً أدخل نصًا');
+
+                const resp = await fetch(apiConvertText, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,language})});
+                if(!resp.ok){
+                    const txt = await resp.text().catch(()=>null);
+                    console.error('convert-text failed', resp.status, txt);
+                    return alert('فشل تحويل النص (رمز: ' + resp.status + ')');
+                }
+
+                const json = await resp.json().catch(err=>{ throw new Error('Invalid JSON response: '+err.message); });
+                sequence = json.sequence || [];
+                // Prefer whole-word signs when possible by collapsing character runs
+                if (window.collapseCharactersToWordSigns) {
+                    try { sequence = await window.collapseCharactersToWordSigns(sequence, language); } catch(e){ console.warn('collapseCharactersToWordSigns failed', e); }
+                }
+                index = 0;
+                // enable large centered view for converted sign output and debug
+                try {
+                    const outSection = document.querySelector('.output-section');
+                    console.log('Convert result sequence length =', sequence.length);
+                    const pref = (localStorage.getItem('aisl-welcome-large') === '1');
+                    if (outSection && pref) {
+                        outSection.classList.add('large-sign-view');
+                        console.log('.output-section.classList after add:', outSection.className);
+                    } else if (!pref){
+                        console.debug('Welcome large view disabled by preference; not enabling large-sign-view');
+                    } else {
+                        console.warn('convert: .output-section element not found');
+                    }
+                } catch(e){ console.warn('convert: error adding large-sign-view', e); }
+                renderSequence();
+            }catch(err){
+                console.error('Error in convert handler', err);
+                // Fallback: create a simple placeholder sequence so user sees images
+                try{
+                    const txt = document.getElementById('text').value.trim();
+                    const words = txt ? txt.split(/\s+/).slice(0,12) : [];
+                    sequence = words.length ? words.map((w,i)=>({ text: w, src: '/storage/signs/placeholder.png', duration: 1000 })) : [{ text: txt || '??', src: '/storage/signs/placeholder.png', duration: 1000 }];
+                    index = 0;
+                    try {
+                        const outSection = document.querySelector('.output-section');
+                        const pref = (localStorage.getItem('aisl-welcome-large') === '1');
+                        if (outSection && pref) {
+                            outSection.classList.add('large-sign-view');
+                        }
+                    } catch(e){}
+                    renderSequence();
+                }catch(e){
+                    alert('حدث خطأ عند محاولة تحويل النص: ' + (err.message || err));
+                }
             }
-            index = 0; renderSequence();
         });
 
         document.getElementById('uploadAudio').addEventListener('click', async ()=>{
@@ -283,15 +341,153 @@
             startRecBtn.disabled = true; stopRecBtn.disabled = true; document.getElementById('liveTranscript').textContent = 'ميزة التعرف بالصوت غير متاحة';
         }
 
-        function renderSequence(){ const out=document.getElementById('output'); out.innerHTML=''; sequence.forEach((s,i)=>{ const img=document.createElement('img'); img.src=s.src; img.alt=s.text||''; img.className='sign-image'; img.style.opacity = i===index?1:0.5; out.appendChild(img); }); updateProgress(); }
+        function renderSequence(){
+            const out = document.getElementById('output');
+            out.innerHTML = '';
+            const largeMode = document.querySelector('.output-section')?.classList.contains('large-sign-view');
+            console.log('renderSequence: largeMode=', largeMode, 'sequenceLen=', sequence.length);
+
+                if(largeMode){
+                // show main big image and thumbnails
+                out.innerHTML = '';
+                const mainWrapper = document.createElement('div');
+                mainWrapper.className = 'large-sign-wrapper';
+                const mainImg = document.createElement('img');
+                const firstSign = sequence[index] || sequence[0];
+                mainImg.src = (firstSign && firstSign.src) ? firstSign.src : '/storage/signs/placeholder.png';
+                mainImg.alt = (firstSign && firstSign.text) ? firstSign.text : '';
+                mainImg.className = 'sign-image large';
+                mainWrapper.appendChild(mainImg);
+                out.appendChild(mainWrapper);
+                const thumbs = document.createElement('div');
+                thumbs.className = 'sign-thumbs';
+                sequence.forEach((s,i)=>{
+                    const t = document.createElement('img');
+                    t.src = s.src || '/storage/signs/placeholder.png';
+                    t.alt = s.text || '';
+                    t.className = i===index ? 'sign-image thumb active' : 'sign-image thumb';
+                    t.style.opacity = i === index ? '1' : '0.6';
+                    t.addEventListener('click', ()=>{
+                        index = i;
+                        mainImg.src = t.src;
+                        mainImg.alt = t.alt;
+                        document.querySelectorAll('.sign-thumbs .sign-image.thumb').forEach((node, j)=>{ node.style.opacity = (j===i?1:0.6); });
+                        updateProgress();
+                    });
+                    thumbs.appendChild(t);
+                });
+                out.appendChild(thumbs);
+                // Safety: if mainWrapper missing for any reason, ensure we have a main image above thumbs
+                if (!document.querySelector('#output .large-sign-wrapper')){
+                    try{
+                        const fallbackMainWrapper = document.createElement('div');
+                        fallbackMainWrapper.className = 'large-sign-wrapper';
+                        const fallbackImg = document.createElement('img');
+                        fallbackImg.className = 'sign-image large';
+                        fallbackImg.src = (sequence[0] && sequence[0].src) ? sequence[0].src : '/storage/signs/placeholder.png';
+                        fallbackImg.alt = (sequence[0] && sequence[0].text) ? sequence[0].text : '';
+                        fallbackMainWrapper.appendChild(fallbackImg);
+                        out.insertBefore(fallbackMainWrapper, thumbs);
+                    }catch(e){ console.warn('renderSequence fallback mainWrapper creation failed', e); }
+                }
+                // mark welcome card as having sequence (tells placeholder overlay to hide)
+                try{ const card = document.querySelector('.welcome-card'); if(card) card.classList.add('has-sequence'); } catch(e){}
+            } else {
+                sequence.forEach((s,i)=>{
+                    const img = document.createElement('img');
+                    img.src = s.src || '/storage/signs/placeholder.png';
+                    img.alt = s.text || '';
+                    img.className = 'sign-image';
+                    img.style.opacity = i===index?1:0.5;
+                    out.appendChild(img);
+                });
+            }
+            // If not in large mode, make sure welcome card doesn't claim to have a sequence (so placeholder shows)
+            try{ const card = document.querySelector('.welcome-card'); if(card && !largeMode) card.classList.remove('has-sequence'); } catch(e){}
+
+            updateProgress();
+        }
         function updateProgress(){ document.getElementById('subtitle').textContent = (sequence[index] && sequence[index].text) || '' }
 
         document.getElementById('play').addEventListener('click', ()=>{ if(!sequence.length) return; playing=true; startPlayback(); });
         document.getElementById('pause').addEventListener('click', ()=>{ playing=false; stopPlayback(); });
         document.getElementById('speed').addEventListener('input', (e)=>{ speed = parseFloat(e.target.value); if(playing){ stopPlayback(); startPlayback(); } });
-        function startPlayback(){ stopPlayback(); timer = setInterval(()=>{ index = (index+1)%sequence.length; const imgs=document.querySelectorAll('#output img'); imgs.forEach((im,i)=>im.style.opacity = i===index?1:0.4); updateProgress(); }, 1000/ speed);} function stopPlayback(){ if(timer) clearInterval(timer); timer=null; }
+        function startPlayback(){
+            stopPlayback();
+            timer = setInterval(()=>{
+                index = (index+1)%sequence.length;
+                const largeMode = document.querySelector('.output-section')?.classList.contains('large-sign-view');
+                if(largeMode){
+                    try{
+                        // Update main large image and thumbnails
+                        const mainImg = document.querySelector('#output .large-sign-wrapper .sign-image.large');
+                        if(mainImg) mainImg.src = sequence[index].src || '/storage/signs/placeholder.png';
+                        const thumbImgs = document.querySelectorAll('#output .sign-image.thumb');
+                        thumbImgs.forEach((im,i)=>{ im.style.opacity = i===index? '1' : '0.6'; });
+                    }catch(e){ console.warn('startPlayback (largeMode) error', e); }
+                }else{
+                    const imgs=document.querySelectorAll('#output img'); imgs.forEach((im,i)=>im.style.opacity = i===index?1:0.4);
+                }
+                updateProgress();
+            }, 1000/ speed);
+        }
+        function stopPlayback(){ if(timer) clearInterval(timer); timer=null; }
 
         if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
+
+        // allow tapping the output to close the large centered view
+        try{
+            const outEl = document.getElementById('output');
+            outEl && outEl.addEventListener('click', ()=>{
+                const container = document.querySelector('.output-section');
+                if(container && container.classList.contains('large-sign-view')){
+                    container.classList.remove('large-sign-view');
+                    renderSequence();
+                }
+            });
+        }catch(e){}
+
+        // Welcome frame toggle & close controls
+        try{
+            const toggleBtn = document.getElementById('welcomeFrameToggle');
+            const closeBtn = document.getElementById('welcomeFrameClose');
+            const outputSection = document.querySelector('.output-section');
+            // initialize from preference
+            if(toggleBtn){
+                const pref = localStorage.getItem('aisl-welcome-large') === '1';
+                toggleBtn.setAttribute('aria-pressed', pref ? 'true' : 'false');
+                if(pref && outputSection) outputSection.classList.add('large-sign-view');
+                toggleBtn.addEventListener('click', ()=>{
+                    const pressed = toggleBtn.getAttribute('aria-pressed') === 'true';
+                    const newPressed = !pressed;
+                    toggleBtn.setAttribute('aria-pressed', newPressed ? 'true' : 'false');
+                    try{ localStorage.setItem('aisl-welcome-large', newPressed ? '1' : '0'); } catch(e){}
+                    if(outputSection){
+                        if(newPressed) outputSection.classList.add('large-sign-view'); else outputSection.classList.remove('large-sign-view');
+                        renderSequence();
+                    }
+                });
+            }
+            if(closeBtn){
+                closeBtn.addEventListener('click', ()=>{
+                    if(outputSection) outputSection.classList.remove('large-sign-view');
+                    if(toggleBtn) toggleBtn.setAttribute('aria-pressed','false');
+                    try{ localStorage.setItem('aisl-welcome-large','0'); } catch(e){}
+                    renderSequence();
+                });
+            }
+            // Allow closing with Escape key
+            document.addEventListener('keydown', (e)=>{
+                if (e.key === 'Escape'){
+                    if(outputSection && outputSection.classList.contains('large-sign-view')){
+                        outputSection.classList.remove('large-sign-view');
+                        if(toggleBtn) toggleBtn.setAttribute('aria-pressed','false');
+                        try{ localStorage.setItem('aisl-welcome-large','0'); } catch(e){}
+                        renderSequence();
+                    }
+                }
+            });
+        }catch(e){ console.warn('Welcome frame controls init failed', e); }
 
     </script>
 
