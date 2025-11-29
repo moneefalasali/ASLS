@@ -38,7 +38,7 @@
         @yield('header-right')
         <!-- Compact mode toggle -->
         <button id="compactToggle" class="header-btn" title="وضع مضغوط" aria-label="وضع مضغوط" style="margin-left:8px; padding:6px 10px; font-weight:600;" type="button">
-          <span id="compactLabel"> ASLS</span>
+          <span id="compactLabel"> AISL</span>
         </button>
       </div>
     </header>
@@ -171,10 +171,10 @@
             const updateButton = ()=>{
               if (document.body.classList.contains('compact-ui')) {
                 btn.style.background = 'rgba(255,255,255,0.12)';
-                if (label) label.textContent = ' ASLS ';
+                if (label) label.textContent = ' AISL ';
               } else {
                 btn.style.background = 'rgba(255,255,255,0.06)';
-                if (label) label.textContent = 'AsLs ';
+                if (label) label.textContent = 'AIsL ';
               }
             };
             btn.addEventListener('click', ()=>{
