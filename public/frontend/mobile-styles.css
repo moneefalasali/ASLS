@@ -2188,7 +2188,7 @@ body.force-mobile .mobile-container .welcome-card .large-sign-wrapper .sign-imag
 /* Force bottom navigation visible on desktop to match mobile mockup */
 .bottom-nav {
   display: flex !important;
-  position: fixed !important;
+  position: fixed ;
   bottom: 0 !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
