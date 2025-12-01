@@ -81,48 +81,50 @@
             @yield('content')
         </main>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <div class="bottom-nav-container">
-                <a href="/" class="bottom-nav-item {{ request()->is('/') ? 'active' : '' }}">
-                    <div class="bottom-nav-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="bottom-nav-label">الرئيسية</span>
-                </a>
-
-                <a href="/conversations" class="bottom-nav-item {{ request()->is('conversations*') ? 'active' : '' }}">
-                    <div class="bottom-nav-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="bottom-nav-label">المحادثات</span>
-                </a>
-
-                <a href="/signs" class="bottom-nav-item {{ request()->is('signs*') ? 'active' : '' }}">
-                    <div class="bottom-nav-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V22H13V11C14.1 11 15 10.1 15 9Z" fill="currentColor"/>
-                        </svg>
-                    </div>
-                    <span class="bottom-nav-label">الإشارات</span>
-                </a>
-
-                <a href="/profile" class="bottom-nav-item {{ request()->is('profile*') ? 'active' : '' }}">
-                    <div class="bottom-nav-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M4 21v-1c0-2.761 4-4 8-4s8 1.239 8 4v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="bottom-nav-label">الحساب</span>
-                </a>
-            </div>
-        </nav>
+        
     </div>
+
+    <!-- Bottom Navigation (moved outside the main container so position:fixed won't be scoped by transformed ancestors) -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="/" class="bottom-nav-item {{ request()->is('/') ? 'active' : '' }}">
+                <div class="bottom-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="bottom-nav-label">الرئيسية</span>
+            </a>
+
+            <a href="/conversations" class="bottom-nav-item {{ request()->is('conversations*') ? 'active' : '' }}">
+                <div class="bottom-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="bottom-nav-label">المحادثات</span>
+            </a>
+
+            <a href="/signs" class="bottom-nav-item {{ request()->is('signs*') ? 'active' : '' }}">
+                <div class="bottom-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V22H13V11C14.1 11 15 10.1 15 9Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="bottom-nav-label">الإشارات</span>
+            </a>
+
+            <a href="/profile" class="bottom-nav-item {{ request()->is('profile*') ? 'active' : '' }}">
+                <div class="bottom-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4 21v-1c0-2.761 4-4 8-4s8 1.239 8 4v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="bottom-nav-label">الحساب</span>
+            </a>
+        </div>
+    </nav>
 
     <!-- PWA install banner (hidden by default) -->
     <div id="installBanner" class="install-banner" style="display:none;">
