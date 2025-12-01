@@ -243,6 +243,7 @@ input, button, textarea, select {
   font-weight: 700;
   margin-bottom: 4px;
   background: linear-gradient(135deg, currentColor 0%, var(--bg-primary) 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -842,14 +843,8 @@ img[src$="/frontend/app-icon-192.png"], img[src$="app-icon-192.png"], .brand-log
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Card Styles */
@@ -861,6 +856,7 @@ img[src$="/frontend/app-icon-192.png"], img[src$="app-icon-192.png"], .brand-log
   margin: 16px;
   border: 1px solid rgba(255,255,255,0.1);
   box-shadow: var(--shadow-md);
+}
 
 .mobile-card.large {
   padding: 14px 12px;
@@ -1247,13 +1243,13 @@ img[src$="/frontend/app-icon-192.png"], img[src$="app-icon-192.png"], .brand-log
 }
 
 /* When desktop preview forces the mobile layout, apply same centering and border rules. */
+body.force-mobile .mobile-container .welcome-card .sign-display {
   width: auto !important;
   max-width: 360px !important; /* keep the sign inside typical phone width */
   margin: 0 auto !important; /* center in the phone frame */
   padding: 8px !important; /* nice padding inside the border */
   border-radius: 12px !important;
-body.force-mobile .mobile-container .welcome-card .sign-display {
-    border: 2px solid var(--secondary-orange) !important; /* distinct border color for sign-view */
+  border: 2px solid var(--secondary-orange) !important; /* distinct border color for sign-view */
   background: rgba(255,255,255,0.02) !important; /* subtle background to show the sign area */
   box-shadow: none !important; /* avoid large shadows that make it look like a site-level modal */
   box-sizing: border-box !important;
@@ -2188,7 +2184,7 @@ body.force-mobile .mobile-container .welcome-card .large-sign-wrapper .sign-imag
 /* Force bottom navigation visible on desktop to match mobile mockup */
 .bottom-nav {
   display: flex !important;
-  position: fixed ;
+  position: fixed !important;
   bottom: 0 !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
@@ -2198,4 +2194,23 @@ body.force-mobile .mobile-container .welcome-card .large-sign-wrapper .sign-imag
   z-index: 2000 !important;
   box-shadow: 0 -6px 30px rgba(16,24,40,0.06) !important;
 }
+
+/* Final override: ensure the bottom nav stays fixed to the viewport
+   (Important note: if an ancestor element applies a CSS transform, this
+    will make fixed elements behave as if absolutely positioned to that
+    ancestor. In that case you must move the nav out of the transformed
+    container and make it a direct child of `<body>`.) */
+.bottom-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 414px !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+  backface-visibility: hidden !important;
 }
